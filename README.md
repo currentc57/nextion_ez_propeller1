@@ -1,6 +1,6 @@
   
 
-# nextion_ez 
+# nextion_ez spin library for the Propeller (P1) chip
 
 ## Description
 
