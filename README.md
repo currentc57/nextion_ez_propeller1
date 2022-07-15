@@ -122,9 +122,10 @@ A local Number component n0 on page1 can be accessed by page1.n0 or n0, but ther
 
 
 ## Compatibility
-* Propeller     (https://github.com/parallaxinc/propeller spin version in P1 folder)
-* Propeller2    (https://github.com/parallaxinc/propeller spin2 version in P2 folder)
+* Propeller1    (https://github.com/currentc57/nextion_ez_propeller1)
+* Propeller2    (https://github.com/currentc57/nextion_ez_propeller2)
 * Arduino       (https://github.com/currentc57/nextion_ez)
+* Energia       (https://github.com/currentc57/nextion_ez)
 
 
 ## Licence 
