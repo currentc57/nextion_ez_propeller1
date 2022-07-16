@@ -45,7 +45,7 @@ Your code should call the `listen()` method frequently to check for new commands
 
 example:
 ```spin
-PUB main()
+PUB main
     nextion.listen                          ' need to run this to check for incoming data from the Nextion
     if nextion.cmdAvail > 0                 ' has the nextion sent a command?
       callCommand(nextion.getCmd)           ' get the command byte and see parse it        
