@@ -23,12 +23,13 @@ If you find this library useful, please consider supporting the author of the or
 - `pushCmdArg()`
 - `sendCmd()`
 - `addWave()`
-- `readNum()`
 - `readStr()` 
-- `readByte()`
+- `readNum()`
+- `listen()`
 - `cmdAvail()`
 - `getCmd()`
 - `getCmdLen()`
+- `readByte()`
 - `getCurrentPage()`
 - `getLastPage()`
 - `setCurrentPage()`
