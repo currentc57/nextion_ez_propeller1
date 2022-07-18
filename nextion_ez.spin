@@ -79,7 +79,7 @@ PUB writeNum(ptr_component, num)                          'send a numeric value 
 {{
   send a numeric value to nextion
   ptr_component should be a pointer to a string that names the object and attribute to receive the new value
-  _num is the value to assign to the object.attribute
+  num is the value to assign to the object.attribute
 
   example: nextion.writeNum(STRING("j0.val"), number)
 }}
@@ -117,7 +117,8 @@ PUB writeByte(val)                                        'send raw data byte (n
 '------------------------------------------------------------------------------
 PUB pushCmdArg(argument)                                'load the argument FIFO with numeric arguments that are to be sent with the command using sendCmd()
 {{
-  Used to load the argument FIFO with numeric arguments that are to be sent with the command using sendCmd()
+  Used to load the argument FIFO with numeric arguments that are to be sent with the command using sendCmd().  
+  This allows easier creation of methods that take a variable argument.
   example:  to send the command "page 1" to the nextion
             nextion.pushCmdArg(1)
             nextion.sendCmd(STRING("page"))
@@ -129,7 +130,7 @@ PUB pushCmdArg(argument)                                'load the argument FIFO 
 '------------------------------------------------------------------------------
 PUB sendCmd(ptr_command) | count, x, argument                               'send a command to nextion
 {{
-  send a command to nextion
+  Send a single string command to nextion.  
   ptr_command should be a pointer to a string containing the command to be sent
 
   example: nextion.sendCmd(STRING("page 0"))
@@ -313,8 +314,26 @@ PUB readNum(ptr_component) : num | _time, _ms, _ffCount, _end, _char, _count, _n
   num |= _numBuff[0]
 
   return
-'------------------------------------------------------------------------------
-PUB readByte : _char                                    'read a byte from serial buffer (for use in custom commannds)
+
+PUB readByte : _char                                    'read a byte from serial buffer 
+{{
+  Read a single byte from the serial buffer.
+  
+  This is used to retrieve additional commmand bytes for parsing.  The first command byte is pulled from the buffer by listen() and is then
+  available via getCmd() method.  Any additional command bytes can be pulled from the buffer via readByte().
+  
+  example: 
+  PUB main()
+    nextion.listen                          ' need to run this to check for incoming data from the Nextion
+    if nextion.cmdAvail() > 0               ' has the nextion sent a command?
+      callCommand(nextion.getCmd())         ' get the 1st command byte and see parse it         
+
+  PRI callCommand(_cmd)                       ' parse the 1st command byte and decide how to proceed
+    case _cmd
+      "T" :                                   ' standard Easy Nextion Library commands start with "T"
+        callTrigger(readByte())               ' so we need the second byte to know what function to call
+                                              ' custom commands can be added by expanding this case statement   
+}}
   _char := _nextion.rxTime(100)                         'if timeout (-1) return error (-1)
   return
 '------------------------------------------------------------------------------
@@ -376,26 +395,72 @@ PUB listen | _char, _time, _ms, _len, _cmdFound, _cmd      'check for incoming s
   return
 '------------------------------------------------------------------------------
 PUB getCurrentPage : _page                              'returns the current page id
+{{
+  This method is provided as a way to read the methods current_page_id variable.
+  
+  In order for the object to update the Id of the current page, you must write in the Preinitialize Event of every page: printh 23 02 50 XX , 
+  where XX the id of the page in HEX. Your code can then read the current page and previous page using the getCurrentPage() and getLastPage() methods.
+}}
   return current_page_id
 '------------------------------------------------------------------------------
 PUB setCurrentPage(_page)                               'sets the current page id
+{{
+  This method is provided as a way to write the methods current_page_id variable.
+  
+  In some cases it is usefull to be able to change the methods current_page_id and/or last_current_page_id variables.  
+}}
   current_page_id := _page
 '------------------------------------------------------------------------------
 PUB getLastPage : _page                                 'returns the previous page id
+{{
+  This method is provided as a way to read the methods last_current_page_id variable.
+  
+  In order for the object to update the Id of the current page, you must write in the Preinitialize Event of every page: printh 23 02 50 XX , 
+  where XX the id of the page in HEX. Your code can then read the current page and previous page using the getCurrentPage() and getLastPage() methods.
+}}
   return last_current_page_id
 '------------------------------------------------------------------------------
 PUB setLastPage(_page)                                  'sets the previous page id
+{{
+  This method is provided as a way to write the methods last_current_page_id variable.
+  
+  In some cases it is usefull to be able to change the methods current_page_id and/or last_current_page_id variables.  
+}}
+  cur
   last_current_page_id := _page
 '------------------------------------------------------------------------------
 PUB cmdAvail : _avail                                   'returns true if commands in the buffer
+{{
+  After calling the listen() method, this method is used to see if there is a pending command from the Nextion.
+  
+  example: 
+  PUB main()
+    nextion.listen                          ' need to run this to check for incoming data from the Nextion
+    if nextion.cmdAvail() > 0               ' has the nextion sent a command?
+      callCommand(nextion.getCmd())         ' get the 1st command byte and see parse it 
+}}
   _avail := cmd_avail
   cmd_avail := false
   return
 '------------------------------------------------------------------------------
 PUB getCmd : _cmd                                       'returns the 1st command byte
+{{
+  After calling the listen() method, and verifying that a command is available, 
+  this method is used to see retrieve the 1st command byte.
+  
+  example: 
+  PUB main()
+    nextion.listen                          ' need to run this to check for incoming data from the Nextion
+    if nextion.cmdAvail() > 0               ' has the nextion sent a command?
+      callCommand(nextion.getCmd())         ' get the 1st command byte and see parse it 
+}}
   return cmd
 '------------------------------------------------------------------------------
 PUB getCmdLen : _len                                  'returns the number of command bytes (for use in custom commands)
+{{
+  This method will return the number of bytes in the command buffer.  
+  This could be useful for creating custom commands of variable length.
+}} 
   return cmd_len
 '------------------------------------------------------------------------------
 CON { license }

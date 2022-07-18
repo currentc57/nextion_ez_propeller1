@@ -1,6 +1,6 @@
   
 
-# nextion_ez 
+# nextion_ez spin library for the Propeller (P1) chip
 
 ## Description
 
@@ -23,12 +23,13 @@ If you find this library useful, please consider supporting the author of the or
 - `pushCmdArg()`
 - `sendCmd()`
 - `addWave()`
-- `readNum()`
 - `readStr()` 
-- `readByte()`
+- `readNum()`
+- `listen()`
 - `cmdAvail()`
 - `getCmd()`
 - `getCmdLen()`
+- `readByte()`
 - `getCurrentPage()`
 - `getLastPage()`
 - `setCurrentPage()`
@@ -39,12 +40,12 @@ If you find this library useful, please consider supporting the author of the or
 In order for the object to update the Id of the current page, you must write the Preinitialize Event of every page: `printh 23 02 50 XX` , where `XX` the id of the page in HEX.
 Your code can then read the current page and previous page using the `getCurrentPage()` and `getLastPage()` methods.
 
-Standard Easy Nextion Library commands are sent from the Nextion display with `printh 23 02 54 XX` , where `XX` is the id for the command in HEX.  
+Standard Easy Nextion Library commands are sent from the Nextion display with `printh 23 02 54 XX` , where HEX 02 is the number of bytes in the command, HEX 54 "T" is the command byte and `XX` is the second byte for the command in HEX.  Since this library leaves parsing the commands to user code, we are not limited to "T" as the first command byte unless trying to reused existing Arduino Easy Nextion HMI code. However "P" is reserved for the library to signal page changes.
 Your code should call the `listen()` method frequently to check for new commands from the display.  You can then use the `cmdAvail`, `getCmd()` and `readByte()` methods to parse any commands.
 
 example:
 ```spin
-PUB main()
+PUB main
     nextion.listen                          ' need to run this to check for incoming data from the Nextion
     if nextion.cmdAvail > 0                 ' has the nextion sent a command?
       callCommand(nextion.getCmd)           ' get the command byte and see parse it        
