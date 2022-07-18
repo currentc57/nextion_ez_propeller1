@@ -49,11 +49,11 @@
            methods getCurrentPage(), getLastPage(), setCurrentPage() and setLastPage()
 
 }}
-
+'------------------------------------------------------------------------------
 CON
   SERIAL_MODE = %0000
   ERROR_NUM = 777777
-
+'------------------------------------------------------------------------------
 VAR
   long  current_page_id
   long  last_current_page_id
@@ -63,10 +63,10 @@ VAR
   long  cmd_fifo[16]
   byte  cmd_fifo_head
   byte  cmd_fifo_tail
-
+'------------------------------------------------------------------------------
 OBJ
   _nextion      : "FullDuplexSerialAvail"               'a special version of FullDuplexSerial that provides an available method like Arduino and FullDuplexSerial
-
+'------------------------------------------------------------------------------
 PUB start(rxPin, txPin, baud)                        'Must be run before using object
 {{
   Must be run before using object
@@ -74,7 +74,7 @@ PUB start(rxPin, txPin, baud)                        'Must be run before using o
 }}
   _nextion.start(rxPin, txPin, SERIAL_MODE, baud)
   waitcnt(clkfreq / 100 + cnt)                          'wait for serial to init
-
+'------------------------------------------------------------------------------
 PUB writeNum(ptr_component, num)                          'send a numeric value to nextion
 {{
   send a numeric value to nextion
@@ -89,7 +89,7 @@ PUB writeNum(ptr_component, num)                          'send a numeric value 
   repeat 3
     _nextion.tx($FF)
 
-
+'------------------------------------------------------------------------------
 PUB writeStr(ptr_component, ptr_txt)                      'send a string value to nextion
 {{
   send a string value to nextion
@@ -105,7 +105,7 @@ PUB writeStr(ptr_component, ptr_txt)                      'send a string value t
   _nextion.tx($22)'double quote
   repeat 3
     _nextion.tx($FF)
-
+'------------------------------------------------------------------------------
 PUB writeByte(val)                                        'send raw data byte (not ASCII formated) to Nextion
 {{
   Main purpose and usage is for sending the raw data required by the addt command
@@ -114,7 +114,7 @@ PUB writeByte(val)                                        'send raw data byte (n
   example: nextion.writeByte(0)
  }}
   _nextion.tx(val)
-
+'------------------------------------------------------------------------------
 PUB pushCmdArg(argument)                                'load the argument FIFO with numeric arguments that are to be sent with the command using sendCmd()
 {{
   Used to load the argument FIFO with numeric arguments that are to be sent with the command using sendCmd()
@@ -126,7 +126,7 @@ PUB pushCmdArg(argument)                                'load the argument FIFO 
   cmd_fifo_head++
   if cmd_fifo_head > 15
     cmd_fifo_head := 0
-
+'------------------------------------------------------------------------------
 PUB sendCmd(ptr_command) | count, x, argument                               'send a command to nextion
 {{
   send a command to nextion
@@ -156,7 +156,7 @@ PUB sendCmd(ptr_command) | count, x, argument                               'sen
   repeat 3
     _nextion.tx($FF)
 
-
+'------------------------------------------------------------------------------
 PUB addWave(id, channel, val)                           'Add single value to a Nextion waveform channel
 {{
   Add single value to a Nextion waveform channel
@@ -175,7 +175,7 @@ PUB addWave(id, channel, val)                           'Add single value to a N
   repeat 3
     _nextion.tx($FF)
 
-
+'------------------------------------------------------------------------------
 PUB readStr(ptr_component, ptr_return) : status | _char, _pos, _time, _ms, _ffCount, _end  'Read a string value from nextion, will return a 1 if successful or -1 on error
 {{
   Read a string value from nextion, will return a 1 if successful or -1 on error
@@ -241,7 +241,7 @@ PUB readStr(ptr_component, ptr_return) : status | _char, _pos, _time, _ms, _ffCo
       return
 
   return 1
-
+'------------------------------------------------------------------------------
 PUB readNum(ptr_component) : num | _time, _ms, _ffCount, _end, _char, _count, _numBuff[4]   'read a numeric value from nextion, returns number value or 777777 on error
 {{
   Read a numeric value from nextion, returns number value or 777777 on error
@@ -313,11 +313,11 @@ PUB readNum(ptr_component) : num | _time, _ms, _ffCount, _end, _char, _count, _n
   num |= _numBuff[0]
 
   return
-
+'------------------------------------------------------------------------------
 PUB readByte : _char                                    'read a byte from serial buffer (for use in custom commannds)
   _char := _nextion.rxTime(100)                         'if timeout (-1) return error (-1)
   return
-
+'------------------------------------------------------------------------------
 PUB listen | _char, _time, _ms, _len, _cmdFound, _cmd      'check for incoming serial data from nextion, must be run frequently to respond to events
 {{
   Check for incoming serial data from nextion, must be run frequently to respond to events
@@ -374,31 +374,31 @@ PUB listen | _char, _time, _ms, _len, _cmdFound, _cmd      'check for incoming s
           cmd_avail := true
           cmd := _cmd
   return
-
+'------------------------------------------------------------------------------
 PUB getCurrentPage : _page                              'returns the current page id
   return current_page_id
-
+'------------------------------------------------------------------------------
 PUB setCurrentPage(_page)                               'sets the current page id
   current_page_id := _page
-
+'------------------------------------------------------------------------------
 PUB getLastPage : _page                                 'returns the previous page id
   return last_current_page_id
-
+'------------------------------------------------------------------------------
 PUB setLastPage(_page)                                  'sets the previous page id
   last_current_page_id := _page
-
+'------------------------------------------------------------------------------
 PUB cmdAvail : _avail                                   'returns true if commands in the buffer
   _avail := cmd_avail
   cmd_avail := false
   return
-
+'------------------------------------------------------------------------------
 PUB getCmd : _cmd                                       'returns the 1st command byte
   return cmd
-
+'------------------------------------------------------------------------------
 PUB getCmdLen : _len                                  'returns the number of command bytes (for use in custom commands)
   return cmd_len
-
-con { license }
+'------------------------------------------------------------------------------
+CON { license }
 
 {{
 
