@@ -119,9 +119,11 @@ PUB pushCmdArg(argument)                                'load the argument FIFO 
 {{
   Used to load the argument FIFO with numeric arguments that are to be sent with the command using sendCmd().
   This allows easier creation of methods that take a variable argument.
+  if using FIFO, the command string must include any required spaces or commas before the first FIFO argument
+
   example:  to send the command "page 1" to the nextion
             nextion.pushCmdArg(1)
-            nextion.sendCmd(STRING("page"))
+            nextion.sendCmd(STRING("page "))
 }}
   cmd_fifo[cmd_fifo_head] := argument
   cmd_fifo_head++
@@ -132,6 +134,7 @@ PUB sendCmd(ptr_command) | count, x, argument                               'sen
 {{
   Send a single string command to nextion.
   ptr_command should be a pointer to a string containing the command to be sent
+  if using FIFO, the command string must include any required spaces or commas before the first FIFO argument
 
   example: nextion.sendCmd(STRING("page 0"))
 }}
@@ -143,7 +146,7 @@ PUB sendCmd(ptr_command) | count, x, argument                               'sen
   _nextion.str(ptr_command)
 
   if(count > 0)
-    _nextion.tx(" ")
+    '_nextion.tx(" ")
     x := 0
     repeat count
       if x > 0
